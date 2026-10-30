@@ -1,6 +1,6 @@
 # AI-PDLC
 
-AI-PDLC (AI-Native Product Development Lifecycle) is a versioned, spec-first workflow for building products with AI agents. Specialized agent pods do the mechanical work — specifying, designing, building, testing, shipping, observing — while humans write the specification, steer the pods, and pass or fail every quality gate. How much process and human attention a task gets is decided by one question: how risky is it?
+AI-PDLC (AI-Native Product Development Lifecycle) is a versioned, spec-first workflow for building products with AI agents. Specialized agent pods do the mechanical work — specifying, designing, building, testing, shipping, observing — while humans provide requirements and context the specification, steer the pods, and approve or reject deliverables at each quality gate. How much process and human attention a task gets is decided by one question: how risky is it?
 
 The full methodology is described in [DESCRIPTION.md](DESCRIPTION.md).
 

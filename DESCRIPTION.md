@@ -1,6 +1,6 @@
 # AI-PDLC — AI-Native Product Development Lifecycle
 
-AI-PDLC is a versioned, spec-first workflow for building products with AI agents. It applies wherever agents do the work and humans are accountable for the result: software, documentation, data pipelines, content, hardware firmware, research artifacts, agent skills, tool definitions, and agent crews. Specialized agent pods handle the mechanical work (specifying, designing, building, testing, shipping, observing). Humans write the specification, steer the pods, and pass or fail every quality gate. One question decides how much process and human attention a task gets: how risky is it? The workflow exists to keep three failure modes in check: drift between the spec and the product, probabilistic errors, and uncontrolled complexity growth.
+AI-PDLC is a versioned, spec-first workflow for building software and other technology products with AI agents and skills. It applies wherever agents do the work and humans are accountable for the result: software, documentation, data pipelines, content, hardware firmware, research artifacts, agent skills, tool definitions, and agent crews. Specialized agent pods handle the mechanical work (specifying, designing, building, testing, shipping, observing). Humans provide requirements and context, steer the pods, and approve or reject deliverables at each quality gate. A task's risk level determines how much process and human involvement it requires? The workflow exists to keep three failure modes in check: drift between the spec and the product, probabilistic errors, and uncontrolled complexity growth.
 
 ## Why it exists
 
@@ -10,7 +10,7 @@ AI coding agents raise delivery speed and lower delivery certainty. Three failur
 - **Probabilistic errors:** agents are confident, fluent, and sometimes wrong, so every generated output needs a verification path.
 - **Uncontrolled complexity growth:** agents produce faster than humans can review, letting structure and dependencies grow beyond what anyone can audit.
 
-AI-PDLC exists to keep these three in check. Drift is stopped by the versioned spec and revision pinning, probabilistic errors by deterministic checks and human gates, complexity growth by risk-gated autonomy and evidence-based review. It combines proven practices (phase gates, reviews, risk registers, retrospectives) and adds one new thing: the work itself moves to agents under verification.
+AI-PDLC exists to keep these three in check. Drift is stopped by the versioned spec and revision pinning, probabilistic errors by deterministic checks and human gates, complexity growth by risk-gated autonomy and evidence-based review. It combines proven practices (phase gates, reviews, risk registers, retrospectives) and adds one new thing: the work itself moves to agents under continuous, risk-based verification.
 
 ## Key principles
 
@@ -22,7 +22,18 @@ AI-PDLC exists to keep these three in check. Drift is stopped by the versioned s
 - **End-to-end traceability.** A revision-pinned chain links intent → spec → plan → code → test → deploy, so any artifact can be audited back to its origin.
 - **A closed learning loop.** Evals and retrospectives feed back into pods, prompts, skills, and the methodology itself.
 
-## Core mechanism: risk buys process
+## Roles
+
+Roles are hats; one person may wear several, but the author and approver of the same artifact must always be different people.
+
+- **Product Owner (PO):** owns strategy, spec, retrospectives; approves, revises, rejects.
+- **Technical Reviewer (TR):** owns design, plan, merge evidence; approves, revises, rejects.
+- **Risk Owner (RO):** owns the risk register, class assignment, stop-work; raises or lowers classes, halts work.
+- **Release Authority (RA):** owns release and operations; go, hold, rollback, mitigate, escalate.
+
+Delegation is recorded and lands on a named human, never an agent. Security sign-off is RO authority and may be delegated to a named security owner.
+
+## Core mechanism: risk drives process
 
 Before an agent runs, each work item receives a risk class. The class sets the agent's autonomy and the human gates the work must pass. Raising a class is cheap and can be agent-initiated; lowering one always requires a human decision. Classes attach to work items, not to projects or teams, and can change mid-flight. Agent growth is work: a new skill, tool, or crew is itself a work item and earns its class before it can be installed or reused.
 
@@ -49,17 +60,6 @@ A human gate opens regardless of class when any of these fire:
 Deterministic checks (schema and contract validation, compile, lint, tests, non-determinism re-runs, budget checks) run automatically after every LLM-generated step. They are preconditions, not gates.
 
 Human gates sit only at judgment boundaries: strategy, spec, design, plan, merge, release, operations. Reviewers judge an evidence bundle (diffs, test results, traces, pinned digests), not raw code. Every decision lands in the versioned decision log; changing any pinned revision invalidates the decision and reopens the gate. A missing required role fails the gate closed and escalates it. There is no auto-approve.
-
-## Roles
-
-Roles are hats; one person may wear several, but the author and approver of the same artifact must always be different people.
-
-- **Product Owner (PO):** owns strategy, spec, retrospectives; approves, revises, kills.
-- **Technical Reviewer (TR):** owns design, plan, merge evidence; approves, revises, rejects.
-- **Risk Owner (RO):** owns the risk register, class assignment, stop-work; raises or lowers classes, halts work.
-- **Release Authority (RA):** owns release and operations; go, hold, rollback, mitigate, escalate.
-
-Delegation is recorded and lands on a named human, never an agent. Security sign-off is RO authority and may be delegated to a named security owner.
 
 ## Pods
 
@@ -89,7 +89,7 @@ Interfaces are machine-checkable, and conformance is tested at the boundary. Han
 
 *Constitution: the project's fixed design laws (for example, simplicity, no premature abstraction). Fitness functions: automated checks that a release is healthy (for example, performance and cost thresholds).*
 
-## Worked example
+## Usage example
 
 A task to fix a label in the billing UI starts at R0. The agent edits the copy and, in the same pull request, touches a schema used by the payment service. The scope check at merge detects the new blast radius and reclassifies the item as R2: the merge gate reopens with TR and RO review, and the change ships only with their recorded sign-off. The reclassification lands in the risk register, and the incident feeds the Analysis pod's retrospective. The same holds when a pod writes a skill for later reuse: the skill ships as a work item — class, eval evidence, gate — not as a silent habit.
 
@@ -99,7 +99,7 @@ Risk-driven process (Spiral), risk registers, and likelihood × consequence asse
 
 ## Comparison with existing approaches
 
-| Dimension | Classic methodologies (Agile, Scrum, Waterfall) | Early hybrid AI (Copilot, Cursor tab) | Task-level AI workflows (GitHub Spec Kit and similar) | AI-PDLC |
+| Dimension | Classic methodologies (Agile, Waterfall) | Early hybrid AI (Copilot, Cursor tab) | Task-level AI workflows (GitHub Spec Kit and similar) | AI-PDLC |
 | :--- | :--- | :--- | :--- | :--- |
 | **Execution** | Humans write all code, tests, and docs | Humans write; AI drafts line-level suggestions | Agents complete well-scoped tasks (issue → PR) end to end | Agents execute; humans steer, verify, and arbitrate gates |
 | **Planning & estimation** | Effort-based: function points, COCOMO, story points, velocity | Same estimates; AI speeds coding, not planning | Issue decomposition into tasks; token cost per task becomes a budget line | Risk (likelihood × consequence) as planning currency; sequenced for early risk burn-down |
@@ -112,4 +112,4 @@ Risk-driven process (Spiral), risk registers, and likelihood × consequence asse
 
 ## Non-goals
 
-AI-PDLC does not pick your LLM (model choice is per-task and evidence-backed), does not replace human product judgment, and does not prescribe an agent framework, and does not let agents put self-written skills into service without a class and a gate. Today it is a methodology description, not an implementation.
+AI-PDLC does not pick your LLM (model choice is per-task and evidence-backed), does not replace human product judgment, and does not let agents put self-written skills into service without a class and a gate. Today it is a methodology description, not an implementation.
