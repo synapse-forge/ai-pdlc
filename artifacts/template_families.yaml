@@ -1,0 +1,166 @@
+title: Reusable Documentation Families
+status: proposed
+description: >-
+  Four optional families group documentation types by how their information is
+  organized and consumed, helping identify useful reuse across AI_PDLC contracts.
+usage_notes:
+  - >-
+    Select the concrete documentation contract by artifact type and pin its
+    version; a family label alone does not define a template or validation rules.
+  - >-
+    Families do not determine project folders, approval status, or traceability
+    identifiers, and a mixed document may contain information from several families.
+  - >-
+    Shared metadata, schema modules, and validation helpers can be reused without
+    introducing a family-level contract.
+  - >-
+    Adopt a family-level contract only when distinct artifact types share a useful
+    structure and an actual reader, generator, or validator can reuse it.
+  - >-
+    The benefits below depend on implemented contracts and tools; classification
+    alone does not improve correctness or guarantee reliable agent behavior.
+  - >-
+    All examples are fictional illustrations, not StoryHome requirements, approved
+    decisions, executable templates, or newly mandated document fields.
+
+families:
+  - id: narrative_record
+    name: Narrative Record
+    description: >-
+      A document centered on explaining context, intent, reasoning, or a decision,
+      with supporting evidence and explicit uncertainty where relevant.
+    purpose: >-
+      Preserve the reasoning behind project direction and decisions so that later
+      work can distinguish established facts, proposals, and unresolved questions.
+    agent_development_benefit: >-
+      An agent can retrieve relevant rationale and decision status before proposing
+      an implementation, reducing the need to infer intent from unrelated prose.
+    candidate_artifact_types:
+      - product_brief
+      - research_note
+      - architecture_decision
+    possible_reuse: >-
+      A shared context extractor could expose purpose, scope, evidence references,
+      and status across compatible contracts while retaining type-specific sections.
+    limits: >-
+      A product brief and an architecture decision still need different content;
+      membership does not justify forcing both into one identical template.
+    example:
+      artifact_type: architecture_decision
+      illustrative_content:
+        id: EXAMPLE-DECISION-001
+        context: A field application may be used without network connectivity.
+        proposal: Store unfinished form drafts locally until synchronization is possible.
+        rationale: Preserve user input during temporary connectivity loss.
+        status: proposed
+        open_question: Which data may be stored locally and for how long?
+      agent_use: >-
+        An implementation agent reads the rationale and unresolved storage question,
+        then seeks a decision instead of treating the proposal as an approved requirement.
+
+  - id: record_catalog
+    name: Record Catalog
+    description: >-
+      A collection of independently identifiable records of the same concrete type,
+      such as business rules, glossary terms, or notification definitions.
+    purpose: >-
+      Keep related items in a consistent structure with stable identities so they
+      can be referenced, retrieved, and maintained individually.
+    agent_development_benefit: >-
+      An agent can retrieve a specific record and its dependencies, while shared
+      indexing tools can detect duplicate identifiers and unresolved references.
+    candidate_artifact_types:
+      - business_rule_catalog
+      - glossary
+      - notification_catalog
+    possible_reuse: >-
+      A common record interface could support indexing, identifier checks, and
+      reference resolution across catalogs whose item fields remain type-specific.
+    limits: >-
+      Similar collection structure does not make a glossary term interchangeable
+      with a business rule, and unique identifiers do not prove semantic consistency.
+    example:
+      artifact_type: business_rule_catalog
+      illustrative_content:
+        records:
+          - id: EXAMPLE-RULE-001
+            statement: Only the reservation owner may cancel a draft reservation.
+          - id: EXAMPLE-RULE-002
+            statement: Confirmed reservations require a cancellation reason.
+      agent_use: >-
+        An implementation agent retrieves EXAMPLE-RULE-001 for an authorization
+        check and references the same identifier from the related scenario and test.
+
+  - id: scenario
+    name: Scenario
+    description: >-
+      A description of behavior through an ordered or conditional progression of
+      actions, interactions, and outcomes within a defined context.
+    purpose: >-
+      Make expected behavior and relevant alternatives explicit so that requirements,
+      experience design, and verification can refer to identifiable parts of a flow.
+    agent_development_benefit: >-
+      An agent can connect an implementation task to a specific step or branch and
+      identify which expected outcomes need verification.
+    candidate_artifact_types:
+      - use_case
+      - user_journey
+      - test_scenario
+    possible_reuse: >-
+      Compatible contracts could share step identifiers, scoped references, and
+      flow navigation while preserving different rules for requirements, research,
+      and test expectations.
+    limits: >-
+      A hypothetical user journey is not an approved use case, and a described test
+      scenario is not evidence that a test has been executed or passed.
+    example:
+      artifact_type: use_case
+      illustrative_content:
+        id: EXAMPLE-UC-001
+        goal: Cancel a draft reservation.
+        precondition: The reservation is in draft status.
+        steps:
+          - id: S1
+            action: The user requests cancellation.
+          - id: S2
+            action: The system checks whether the user owns the reservation.
+            rule_ref: EXAMPLE-RULE-001
+        outcomes:
+          authorized: The reservation is cancelled.
+          unauthorized: The request is rejected and the reservation remains unchanged.
+      agent_use: >-
+        An implementation agent links its ownership check and verification cases to
+        EXAMPLE-UC-001/S2 and EXAMPLE-RULE-001 without relying on a file location.
+
+  - id: declarative_specification
+    name: Declarative Specification
+    description: >-
+      A machine-readable definition of structures, interfaces, values, or constraints
+      whose meaning is governed by a specific specification or contract.
+    purpose: >-
+      Express precise definitions in formats that suitable tools can validate,
+      inspect, or consume during development.
+    agent_development_benefit: >-
+      An agent can use explicit definitions for implementation and automated checks,
+      and reuse a compatible parser or generator where the underlying format supports it.
+    candidate_artifact_types:
+      - api_contract
+      - design_token_set
+      - data_schema
+    possible_reuse: >-
+      A common tool dispatcher could select the appropriate native parser and
+      validator from the declared artifact type and specification version.
+    limits: >-
+      Different specifications retain their native formats and semantics; this family
+      is not a universal schema, and schema validity does not prove product correctness.
+    example:
+      artifact_type: api_contract
+      illustrative_content:
+        operation: Cancel a draft reservation.
+        request: A reservation identifier and the caller's authenticated identity.
+        success: A response confirming cancellation.
+        rejection: A response indicating that the caller is not the owner.
+      agent_use: >-
+        Once expressed in a selected API specification and approved, this contract
+        can guide request and response validation; authorization behavior still
+        requires implementation and verification against EXAMPLE-RULE-001.
